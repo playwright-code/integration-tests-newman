@@ -1,0 +1,25 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    npm install -g newman
+    npm install -g newman-reporter-html-extra
+  displayName: 'Install Newman and Html reporter'
+
+- script: |
+    newman run Age_Care_Customer_Portal.postman_collection.json \
+      --reporters cli,htmlextra \
+      --reporter-htmlextra-export ./reports/report.html
+  displayName: 'Run API Test'
+  continueOnError: true
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish HTML Report'
+  inputs:
+    targetPath: './reports'
+    artifactName: 'API_Test_Report'
+    publishLocation: 'Container'
